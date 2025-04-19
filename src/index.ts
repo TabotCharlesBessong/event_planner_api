@@ -9,6 +9,11 @@ import User from "./models/user.model";
 import Event from "./models/event.model";
 import Booking from "./models/booking.model";
 
+// Import routes
+import authRoutes from './routes/auth.routes';
+import eventRoutes from './routes/event.routes';
+import bookingRoutes from './routes/booking.routes';
+
 
 
 // Load env variables
@@ -22,6 +27,11 @@ app.use(helmet()); // Security headers
 app.use(cors()); // Enable CORS
 app.use(express.json()); // Body parser
 app.use(morgan("dev")); // Logging
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 
 // Health check route
