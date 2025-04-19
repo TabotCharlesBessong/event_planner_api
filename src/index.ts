@@ -5,6 +5,9 @@ import morgan from "morgan";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import sequelize from "./config/database";
+import User from "./models/user.model";
+import Event from "./models/event.model";
+import Booking from "./models/booking.model";
 
 
 
@@ -36,6 +39,9 @@ const startServer = async () => {
     // Test database connection
     await sequelize.authenticate();
     console.log("Database connection established successfully.");
+    User.sync({alter:false})
+    Event.sync({alter:false})
+    Booking.sync({alter:false})
 
     // Sync models with database (use {force: true} to drop tables in development)
     const syncOptions =
