@@ -6,7 +6,7 @@ import Event from "./event.model";
 
 interface BookingAttributes {
   id: number;
-  userId: number;
+  userId?: number;
   eventId: number;
   bookingDate: Date;
   status: string;
