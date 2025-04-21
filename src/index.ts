@@ -13,8 +13,7 @@ import Booking from "./models/booking.model";
 import authRoutes from './routes/auth.routes';
 import eventRoutes from './routes/event.routes';
 import bookingRoutes from './routes/booking.routes';
-
-
+import statsRoutes from './routes/stats.routes';
 
 // Load env variables
 dotenv.config();
@@ -32,13 +31,12 @@ app.use(morgan("dev")); // Logging
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
-
+app.use('/api/stats', statsRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
 });
-
 
 // Define port
 const PORT = process.env.PORT || 5000;

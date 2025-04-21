@@ -14,6 +14,9 @@ interface UserAttributes {
   email: string;
   password: string;
   role: UserRole;
+  isVerified: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -29,6 +32,9 @@ class User
   public email!: string;
   public password!: string;
   public role!: UserRole;
+  public isVerified!: boolean;
+  public resetPasswordToken?: string;
+  public resetPasswordExpire?: Date;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -66,6 +72,19 @@ User.init(
       type: DataTypes.ENUM(...Object.values(UserRole)),
       allowNull: false,
       defaultValue: UserRole.CLIENT,
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpire: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {
