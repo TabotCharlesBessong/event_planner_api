@@ -1,5 +1,5 @@
 // src/routes/event.routes.ts
-import express from "express";
+import express, { RequestHandler } from "express";
 import {
   createEvent,
   getEvents,
@@ -16,8 +16,8 @@ import { UserRole } from "../models/user.model";
 const router = express.Router();
 
 // Public routes
-router.get("/", getEvents);
-router.get("/:id", getEvent);
+router.get("/", getEvents as RequestHandler);
+router.get("/:id", getEvent as RequestHandler);
 
 // Protected admin routes
 router.post(
@@ -25,21 +25,21 @@ router.post(
   protect,
   authorize(UserRole.ADMIN),
   validateBody(eventSchema),
-  createEvent
+  createEvent as RequestHandler
 );
 router.put(
   "/:id",
   protect,
   authorize(UserRole.ADMIN),
   validateBody(eventSchema),
-  updateEvent
+  updateEvent as RequestHandler
 );
-router.delete("/:id", protect, authorize(UserRole.ADMIN), deleteEvent);
+router.delete("/:id", protect, authorize(UserRole.ADMIN), deleteEvent as RequestHandler);
 router.get(
   "/:id/bookings",
   protect,
   authorize(UserRole.ADMIN),
-  getEventBookings
+  getEventBookings as RequestHandler
 );
 
 export default router;

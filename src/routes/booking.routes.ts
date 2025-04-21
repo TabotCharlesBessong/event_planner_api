@@ -1,7 +1,9 @@
 // src/routes/booking.routes.ts
-import express from "express";
+import express, { RequestHandler } from "express";
 import {
   bookEvent,
+  cancelBooking,
+  getUserBookings,
   // getUserBookings,
   // cancelBooking,
 } from "../controllers/booking.controller";
@@ -20,9 +22,9 @@ router.post(
   "/",
   authorize(UserRole.CLIENT),
   validateBody(bookingSchema),
-  bookEvent
+  bookEvent as RequestHandler
 );
-router.get("/", getUserBookings);
-router.delete("/:id", authorize(UserRole.CLIENT), cancelBooking);
+router.get("/", getUserBookings as RequestHandler);
+router.delete("/:id", authorize(UserRole.CLIENT), cancelBooking as RequestHandler);
 
 export default router;

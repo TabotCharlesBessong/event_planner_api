@@ -96,3 +96,94 @@ export const bookEvent = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Add these to src/controllers/booking.controller.ts
+
+// @desc    Get user bookings
+// @route   GET /api/bookings
+// @access  Private (Client)
+export const getUserBookings = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    const bookings = await Booking.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Event,
+          as: "event",
+          attributes: ["id", "title", "date", "time", "location"],
+        },
+      ],
+    });
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings,
+    });
+  } catch (error: any) {
+    console.error("Get user bookings error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
+  }
+};
+
+// @desc    Cancel booking
+// @route   DELETE /api/bookings/:id
+// @access  Private (Client)
+export const cancelBooking = async (req: Request, res: Response) => {
+  try {
+    const booking = await Booking.findByPk(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Check if the booking belongs to the user
+    if (booking.userId !== req.user?.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to cancel this booking",
+      });
+    }
+
+    // Start transaction
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Update event available slots
+      const event = await Event.findByPk(booking.eventId, { transaction });
+      if (event) {
+        event.availableSlots += 1;
+        await event.save({ transaction });
+      }
+
+      // Delete booking
+      await booking.destroy({ transaction });
+
+      // Commit transaction
+      await transaction.commit();
+
+      res.status(200).json({
+        success: true,
+        data: {},
+      });
+    } catch (error) {
+      // Rollback transaction on error
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error: any) {
+    console.error("Cancel booking error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
+  }
+};

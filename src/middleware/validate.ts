@@ -1,9 +1,9 @@
 // src/middleware/validate.ts
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { Schema } from "yup";
 
 const validate =
-  (schema: Schema) =>
+  (schema: Schema): RequestHandler =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.validate({
@@ -11,9 +11,9 @@ const validate =
         query: req.query,
         params: req.params,
       });
-      return next();
+      next();
     } catch (error: any) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: error.message,
       });
@@ -21,7 +21,7 @@ const validate =
   };
 
 export const validateBody =
-  (schema: Schema) =>
+  (schema: Schema): RequestHandler =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const validatedBody = await schema.validate(req.body, {
@@ -29,9 +29,9 @@ export const validateBody =
       });
       // Replace req.body with validated value
       req.body = validatedBody;
-      return next();
+      next();
     } catch (error: any) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: error.errors || error.message,
       });
