@@ -43,3 +43,14 @@ export const bookingSchema = yup.object({
     .required("Event ID is required")
     .positive("Invalid event ID"),
 });
+
+export const forgotPasswordSchema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+});
+
+export const resetPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
