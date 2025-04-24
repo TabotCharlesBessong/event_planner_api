@@ -6,7 +6,8 @@ import {
   register, 
   verifyUser, 
   forgotPassword, 
-  resetPassword 
+  resetPassword,
+  logout
 } from "../controllers/auth.controller";
 import { 
   loginSchema, 
@@ -28,5 +29,6 @@ router.put("/resetpassword/:resetToken", validateBody(resetPasswordSchema), rese
 
 // Protected routes
 router.get("/me", protect, getMe as RequestHandler);
+router.post("/logout", protect, logout as RequestHandler);
 
 export default router;

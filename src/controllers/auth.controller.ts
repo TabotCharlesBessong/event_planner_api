@@ -278,3 +278,23 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   }
 };
+
+// @desc    Logout user
+// @route   POST /api/auth/logout
+// @access  Private
+export const logout = async (req: Request, res: Response) => {
+  try {
+    // The actual logout is handled by the client by removing the token
+    // This endpoint just confirms the logout was successful
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error: any) {
+    console.error("Logout error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
+  }
+};

@@ -68,6 +68,7 @@ export const getEventStats = async (req: Request, res: Response) => {
 // @access  Private (Admin)
 export const getBookingStats = async (req: Request, res: Response) => {
   try {
+    // Get basic booking counts
     const totalBookings = await Booking.count();
     const confirmedBookings = await Booking.count({
       where: {
@@ -83,27 +84,30 @@ export const getBookingStats = async (req: Request, res: Response) => {
     // Get bookings by month
     const bookingsByMonth = await Booking.findAll({
       attributes: [
-        [sequelize.fn("DATE_TRUNC", "month", sequelize.col("createdAt")), "month"],
-        [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+        [sequelize.fn("DATE_TRUNC", "month", sequelize.col("Booking.created_at")), "month"],
+        [sequelize.fn("COUNT", sequelize.col("Booking.id")), "count"],
       ],
-      group: [sequelize.fn("DATE_TRUNC", "month", sequelize.col("createdAt"))],
-      order: [[sequelize.fn("DATE_TRUNC", "month", sequelize.col("createdAt")), "ASC"]],
+      group: [sequelize.fn("DATE_TRUNC", "month", sequelize.col("Booking.created_at"))],
+      order: [[sequelize.fn("DATE_TRUNC", "month", sequelize.col("Booking.created_at")), "ASC"]],
     });
 
     // Get most popular events
     const popularEvents = await Booking.findAll({
       attributes: [
-        "eventId",
-        [sequelize.fn("COUNT", sequelize.col("id")), "bookingCount"],
+        [sequelize.col("event.id"), "eventId"],
+        [sequelize.fn("COUNT", sequelize.col("Booking.id")), "bookingCount"],
+        [sequelize.col("event.title"), "title"],
+        [sequelize.col("event.category"), "category"],
       ],
       include: [
         {
           model: Event,
-          attributes: ["title", "category"],
+          as: "event",
+          attributes: [],
         },
       ],
-      group: ["eventId", "Event.id"],
-      order: [[sequelize.literal("bookingCount"), "DESC"]],
+      group: ["event.id", "event.title", "event.category"],
+      order: [[sequelize.fn("COUNT", sequelize.col("Booking.id")), "DESC"]],
       limit: 5,
     });
 
